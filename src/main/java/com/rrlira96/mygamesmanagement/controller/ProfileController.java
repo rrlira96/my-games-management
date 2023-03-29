@@ -1,7 +1,8 @@
 package com.rrlira96.mygamesmanagement.controller;
 
-import com.rrlira96.mygamesmanagement.entities.Game;
 import com.rrlira96.mygamesmanagement.entities.Profile;
+import com.rrlira96.mygamesmanagement.entities.Review;
+import com.rrlira96.mygamesmanagement.entities.MyGame;
 import com.rrlira96.mygamesmanagement.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/profiles")
@@ -36,16 +38,41 @@ public class ProfileController {
         return ResponseEntity.created(uri).body(profile);
     }
 
-    @PostMapping("/{id}/games")
-    public ResponseEntity<Profile> addGamesOnProfile(@PathVariable String id, @RequestBody List<Game> games) {
-        Profile profile = profileService.addGamesOnProfile(id, games);
-        return ResponseEntity.ok().body(profile);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Profile> deleteProfile(@PathVariable String id) {
         profileService.deleteProfile(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/my-games")
+    public ResponseEntity<List<MyGame>> getGamesOfProfile(@PathVariable String id,
+                                                          @RequestParam Map<String, String> filter) {
+        return ResponseEntity.ok().body(profileService.getGamesOfProfile(id, filter));
+    }
+
+    @PutMapping("/{id}/my-games")
+    public ResponseEntity<Profile> updateGamesOnProfile(@PathVariable String id, @RequestBody MyGame myGame) {
+        Profile profile = profileService.updateGamesOnProfile(id, myGame);
+        return ResponseEntity.ok().body(profile);
+    }
+
+    @PostMapping("/{profileId}/my-games/{gameId}/review")
+    public ResponseEntity<Profile> addReviewOnGame(@PathVariable String profileId,
+                                                   @PathVariable String gameId,
+                                                   @RequestBody Review review) {
+
+        Profile profile = profileService.addReview(profileId, gameId, review);
+        return ResponseEntity.ok().body(profile);
+    }
+
+    @PatchMapping("/{profileId}/my-games/{gameId}/review")
+    public ResponseEntity<Profile> updateMyGameFlags(@PathVariable String profileId,
+                                                           @PathVariable String gameId,
+                                                           @RequestBody Map<String, Boolean> fields) {
+
+        Profile profile = profileService.updateMyGameFlags(profileId, gameId, fields);
+        return ResponseEntity.ok().body(profile);
+    }
+
 
 }

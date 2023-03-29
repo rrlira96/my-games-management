@@ -25,7 +25,7 @@ public class Profile {
     private String email;
     private String username;
     private List<Platform> platforms;
-    private List<Game> allGames;
+    private List<MyGame> games;
 
 }
 
